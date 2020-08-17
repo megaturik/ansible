@@ -1,0 +1,15 @@
+---
+- name: Install EPEL REPO
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    state: present
+  
+- name: install yum-utils vim rsync mysql-connector-python 
+  yum:
+    name: yum-utils,vim,rsync
+    state: present
+      
+- name: copy ssh keys
+  copy:
+    src: root/.ssh/authorized_keys
+    dest : /root/.ssh/authorized_keys

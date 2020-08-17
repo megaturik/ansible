@@ -1,0 +1,7 @@
+- name: Playbook for Bitrix-ENV
+  hosts: hostfordeploy
+  remote_user: root
+  gather_facts: no
+
+  roles:
+    - firewalld

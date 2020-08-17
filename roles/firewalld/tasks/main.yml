@@ -1,0 +1,61 @@
+---
+- name: remove some garbage rules for firewalld
+  firewalld:
+    zone: work
+    service: "{{ item }}"
+    state: disabled
+    permanent: yes
+  loop:
+    - dhcpv6-client
+    - mdns
+    - samba-client
+
+- name: remove some garbage rules for firewalld
+  firewalld:
+    zone: public
+    service: "{{ item }}"
+    state: disabled
+    permanent: yes
+  loop:
+    - dhcpv6-client
+    - mdns
+    - samba-client
+
+- name: remove some garbage rules for firewalld
+  firewalld:
+    zone: home
+    service: "{{ item }}"
+    state: disabled
+    permanent: yes
+  loop:
+    - dhcpv6-client
+    - mdns
+    - samba-client
+
+- name: remove some garbage rules for firewalld
+  firewalld:
+    zone: internal
+    service: "{{ item }}"
+    state: disabled
+    permanent: yes
+  loop:
+    - dhcpv6-client
+    - mdns
+    - samba-client
+
+- firewalld:
+    zone: public
+    service: http 
+    permanent: yes
+    state: enabled
+    
+- firewalld:
+    zone: public
+    service: https
+    permanent: yes
+    state: enabled
+    
+- name: restart firewalld
+  service:
+    name: firewalld
+    state: restarted

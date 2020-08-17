@@ -1,0 +1,78 @@
+---
+- name: Install REMI REPO
+  yum:
+    name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
+    state: present
+
+- name: php + modules for {{php_version}}, {{php_installation_type}} installation
+  when: (php_installation_type == "main")
+  yum:
+    name:
+      - php-cli
+      - php-fpm
+      - php-xml
+      - php-json
+      - php-opcache
+      - php-mysqlnd
+      - php-common
+      - php-fpm
+      - php-pdo
+      - php-gd
+      - php-mbstring
+      - php-pecl-zip
+      - php-pecl-redis
+      - php-soap
+      - php-mcrypt
+      - php-process
+      - php-pear
+    enablerepo: remi-{{php_version}}
+    state: latest
+
+- name: enable service php-fpm
+  when: (php_installation_type == "main")
+  systemd:
+    name: php-fpm
+    enabled: yes
+
+- name: start php-fpm
+  when: (php_installation_type == "main")
+  service:
+    name: php-fpm
+    state: started
+
+- name: php + modules for {{php_version}}, {{php_installation_type}} installation
+  when: (php_installation_type == "additional")
+  yum:
+    name:
+      - "{{php_version}}-php-cli"
+      - "{{php_version}}-php-fpm"
+      - "{{php_version}}-php-xml"
+      - "{{php_version}}-php-json"
+      - "{{php_version}}-php-opcache"
+      - "{{php_version}}-php-mysqlnd"
+      - "{{php_version}}-php-common"
+      - "{{php_version}}-php-fpm"
+      - "{{php_version}}-php-pdo"
+      - "{{php_version}}-php-gd"
+      - "{{php_version}}-php-mbstring"
+      - "{{php_version}}-php-pecl-zip"
+      - "{{php_version}}-php-pecl-redis"
+      - "{{php_version}}-php-soap"
+      - "{{php_version}}-php-mcrypt"
+      - "{{php_version}}-php-process"
+      - "{{php_version}}-php-pear"
+
+    enablerepo: remi-{{php_version}}
+    state: present
+
+- name: enable service php-fpm
+  when: (php_installation_type == "additional")
+  systemd:
+    name: "{{php_version}}-php-fpm"
+    enabled: yes
+
+- name: start php-fpm
+  when: (php_installation_type == "additional")
+  service:
+    name: "{{php_version}}-php-fpm"
+    state: started

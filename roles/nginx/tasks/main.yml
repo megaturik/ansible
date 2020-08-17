@@ -1,0 +1,30 @@
+---
+- name: Add nginx repo
+  yum_repository:
+    name: nginx
+    description: nginx repo
+    file: nginx
+    baseurl: http://nginx.org/packages/centos/$releasever/$basearch/
+    gpgcheck: yes
+    gpgkey: https://nginx.org/keys/nginx_signing.key
+    enabled: yes
+
+- name: Install nginx
+  yum:
+    name: nginx
+    state: present
+
+- name: Insert main config
+  copy:
+    src: etc/nginx/nginx.conf
+    dest: /etc/nginx/nginx.conf
+
+- name: enable service nginx
+  systemd:
+    name: nginx
+    enabled: yes
+
+- name: start nginx
+  service:
+    name: nginx
+    state: started

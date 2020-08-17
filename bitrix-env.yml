@@ -1,0 +1,13 @@
+- name: Playbook for Bitrix-ENV
+  hosts: work
+  remote_user: root
+  vars:
+        php_installation_type: 'main'
+        php_version: 'php73'
+        env_user: ryba89
+        php_port: 9001
+        server_name: ryba89.ru
+
+  roles:
+    - php
+    - bitrix-env

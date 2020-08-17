@@ -1,0 +1,53 @@
+---
+- name: Add mariadb repo
+  yum_repository:
+    name: mariadb
+    description: nginx repo
+    file: mariadb
+    baseurl: http://yum.mariadb.org/10.5/centos7-amd64
+    gpgcheck: yes
+    gpgkey: https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+    enabled: yes
+
+- name: Install mariadb
+  yum:
+    name: mariadb-server
+    state: present
+
+- name: start mariadb
+  service:
+    name: mariadb
+    state: started
+
+- set_fact:
+    new_password: "{{ lookup('password', '/dev/null length=12') }}"
+- debug:
+    msg: new root password {{new_password}}
+- name: "Set new root password"
+  shell: mysql --connect-expired-password -uroot -e'ALTER USER 'root'@'localhost' IDENTIFIED BY "{{ new_password }}";'
+
+- name: create mysqld.cnf
+  template:
+    src: server.cnf.j2
+    dest: "/etc/my.cnf.d/server.cnf"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: create /root/.my.cnf
+  template:
+    src: my.cnf.j2
+    dest: "/root/.my.cnf"
+    owner: root
+    group: root
+    mode: 0644      
+    
+- name: enable service mariadb
+  systemd:
+    name: mariadb
+    enabled: yes
+
+- name: start mariadb
+  service:
+    name: mariadb
+    state: restarted

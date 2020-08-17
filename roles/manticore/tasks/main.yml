@@ -1,0 +1,22 @@
+---
+- name: install manticore repo
+  yum:
+    name: https://repo.manticoresearch.com/manticore-repo.noarch.rpm
+    state: present
+
+- name: install manticore
+  yum:
+    name: manticore
+    state: present
+  
+- name: enable service manticore
+  systemd:
+    name: manticore
+    enabled: yes
+
+- name: start manticore
+  service:
+    name: manticore
+    state: started
+
+

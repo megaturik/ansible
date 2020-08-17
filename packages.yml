@@ -1,0 +1,12 @@
+
+- name: Playbook for Bitrix-ENV
+  hosts: hostfordeploy
+  remote_user: root
+  tasks:
+    - name: Gather the rpm package facts
+      package_facts:
+        manager: auto
+
+    - name: Print the rpm package facts
+      debug:
+        var: ansible_facts.packages[1]

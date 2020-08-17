@@ -1,0 +1,25 @@
+---
+- name: Add elasticsearch repo
+  yum_repository:
+    name: elasticsearch
+    description: elasticsearch repo
+    file: elasticsearch
+    baseurl: https://artifacts.elastic.co/packages/6.x/yum
+    gpgcheck: yes
+    gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    enabled: yes
+
+- name: install elasticsearch
+  yum:
+    name: elasticsearch
+    state: present
+  
+- name: enable service elasticsearch
+  systemd:
+    name: elasticsearch
+    enabled: yes
+
+- name: start elasticsearch
+  service:
+    name: elasticsearch
+    state: started
