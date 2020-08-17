@@ -8,8 +8,4 @@
   yum:
     name: yum-utils,vim,rsync
     state: present
-      
-- name: copy ssh keys
-  copy:
-    src: root/.ssh/authorized_keys
-    dest : /root/.ssh/authorized_keys
+     
