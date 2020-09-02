@@ -16,7 +16,7 @@
 
 - name: enable service Zabbix-agent
   systemd:
-    name: mysql
+    name: zabbix-agent
     enabled: yes
 
 - name: start Zabbix-agent
