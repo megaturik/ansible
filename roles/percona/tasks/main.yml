@@ -36,11 +36,14 @@
   register: "percona_temp_password"
   shell: "sed -rn 's/.*A temporary password is generated for root@localhost: (.*)/\\1/p' /var/log/mysqld.log"
 - set_fact:
-    percona_new_password: "{{ lookup('password', '/dev/null length=12 chars=ascii_letters,digits,punctuation') }}"
+    percona_new_password: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters,digits,punctuation') }}"
+
+- debug:
+    msg: new password '{{ percona_new_password }}'
 
 - name: "Set new percona root password"
   when: "'percona-release' not in ansible_facts.packages"
-  shell: mysqladmin -uroot -p'{{percona_temp_password.stdout}}' password "{{ percona_new_password }}"
+  shell: mysqladmin -uroot -p'{{percona_temp_password.stdout}}' password '{{ percona_new_password }}'
 
 - name: create mysqld.cnf
   when: "'percona-release' not in ansible_facts.packages"

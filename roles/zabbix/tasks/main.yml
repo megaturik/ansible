@@ -9,6 +9,11 @@
     name: zabbix-agent
     state: present
 
+- name: Insert zabbix config
+  copy:
+    src: zabbix_agentd.conf
+    dest: /etc/zabbix/zabbix_agentd.conf
+
 - name: enable service Zabbix-agent
   systemd:
     name: mysql

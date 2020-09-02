@@ -16,7 +16,7 @@
 
 - name: Insert main config
   copy:
-    src: etc/nginx/nginx.conf
+    src: nginx.conf
     dest: /etc/nginx/nginx.conf
 
 - name: enable service nginx

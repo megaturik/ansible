@@ -20,11 +20,14 @@
     state: started
 
 - set_fact:
-    new_password: "{{ lookup('password', '/dev/null length=12') }}"
+    new_password: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters,digits,punctuation') }}"
+
 - debug:
-    msg: new root password {{new_password}}
-- name: "Set new root password"
-  shell: mysql --connect-expired-password -uroot -e'ALTER USER 'root'@'localhost' IDENTIFIED BY "{{ new_password }}";'
+    msg: new password '{{ new_password }}'
+
+- name: "Set new mariadb root password"
+  shell: mysqladmin -uroot  password '{{ new_password }}'
+
 
 - name: create mysqld.cnf
   template:

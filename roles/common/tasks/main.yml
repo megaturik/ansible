@@ -6,6 +6,5 @@
   
 - name: install yum-utils vim rsync mysql-connector-python 
   yum:
-    name: yum-utils,vim,rsync
-    state: present
-     
+    name: yum-utils, vim, rsync, mysql-connector-python
+    state: present     

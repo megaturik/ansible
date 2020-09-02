@@ -28,6 +28,15 @@
     enablerepo: remi-{{php_version}}
     state: latest
 
+- name: change default php.ini
+  when: (php_installation_type == "main")
+  lineinfile:
+    path: /etc/php.ini
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '^disable_functions.*', line: 'disable_functions = "popen,system,passthru,proc_open,shell_exec,ftp_exec"' }
+
 - name: enable service php-fpm
   when: (php_installation_type == "main")
   systemd:
@@ -35,6 +44,7 @@
     enabled: yes
 
 - name: start php-fpm
+  ignore_errors: yes
   when: (php_installation_type == "main")
   service:
     name: php-fpm
@@ -65,6 +75,16 @@
     enablerepo: remi-{{php_version}}
     state: present
 
+- name: change default php.ini
+  when: (php_installation_type == "additional")
+  lineinfile:
+    path: /etc/opt/remi/{{php_version}}/php.ini
+    regexp: "{{ item.regexp}}"
+    line: "{{ item.line}}"
+
+  with_items:
+    - { regexp: '^disable_functions.*', line: 'disable_functions = "popen,system,passthru,proc_open,shell_exec,ftp_exec"' }
+
 - name: enable service php-fpm
   when: (php_installation_type == "additional")
   systemd:
@@ -72,6 +92,7 @@
     enabled: yes
 
 - name: start php-fpm
+  ignore_errors: yes
   when: (php_installation_type == "additional")
   service:
     name: "{{php_version}}-php-fpm"
