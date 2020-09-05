@@ -27,7 +27,7 @@
       state: started
 
   - set_fact:
-      new_password: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters,digits,punctuation') }}"
+      new_password: "{{ lookup('password', '/dev/null length=14') }}"
 
   - debug:
       msg: new password '{{ new_password }}'
@@ -66,4 +66,3 @@
 
 - debug:
     msg: /var/lib/mysql already exists, aborting installation.
-        
