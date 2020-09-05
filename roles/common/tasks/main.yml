@@ -1,10 +1,39 @@
 ---
+- name: check if exists epel.repo
+  stat: 
+    path: /etc/yum.repos.d/epel.repo
+  register: epel
+
 - name: Install EPEL REPO
   yum:
     name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     state: present
+  when: epel.stat.exists == False
   
-- name: install yum-utils vim rsync mysql-connector-python 
+- name: install some basic stuff 
   yum:
-    name: yum-utils, vim, rsync, mysql-connector-python
-    state: present     
+    name:
+      - ntp 
+      - yum-utils 
+      - vim
+      - rsync 
+      - mysql-connector-python
+      - python2-PyMySQL
+      - wget
+      - net-tools
+      - tcpdump
+      - git
+      - bash-completion
+      - bash-completion-extras
+    state: present 
+
+
+- name: enable service ntpd
+  systemd:
+    name: ntpd
+    enabled: yes
+
+- name: start ntpd
+  service:
+    name: ntpd
+    state: started

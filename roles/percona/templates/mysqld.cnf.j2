@@ -1,7 +1,5 @@
 [mysqld]
-# join_buffer_size = 128M
-# sort_buffer_size = 2M
-# read_rnd_buffer_size = 2M
+
 datadir=/var/lib/mysql
 socket=/var/lib/mysql/mysql.sock
 
@@ -55,7 +53,6 @@ long_query_time = 3
 character-set-server = utf8
 collation-server = utf8_unicode_ci
 init-connect = "SET NAMES utf8 COLLATE utf8_unicode_ci"
-#skip-character-set-client-handshake
 skip-name-resolve
 [mysqldump]
 quick

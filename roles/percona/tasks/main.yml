@@ -1,76 +1,75 @@
 ---
-- name: "Check if Percona is installed"
-  package_facts:
-    manager: "auto"
+- name: check if exists mysql db directory
+  stat: 
+    path: /var/lib/mysql/
+  register: mysql
 
-- name: Remove my.cnf provided with mariadblibs by default
-  when: "'percona-release' not in ansible_facts.packages"
-  file:
-    path: /etc/my.cnf
-    state: absent  
+- block:
 
-- name: Install percona repo
-  when: "'percona-release' not in ansible_facts.packages"
-  yum:
-    name: https://repo.percona.com/yum/percona-release-latest.noarch.rpm
-    state: present
+  - name: Remove my.cnf provided with mariadblibs by default
+    file:
+      path: /etc/my.cnf
+      state: absent  
 
-- name: setup percona repo
-  when: "'percona-release' not in ansible_facts.packages"
-  shell: percona-release setup ps57
+  - name: Install percona repo
+    yum:
+      name: https://repo.percona.com/yum/percona-release-latest.noarch.rpm
+      state: present
 
-- name: install Percona-Server
-  when: "'percona-release' not in ansible_facts.packages"
-  yum:
-    name: Percona-Server-server-57
-    state: present
+  - name: setup percona repo
+    shell: percona-release setup ps57
 
-- name: start Percona-Server
-  when: "'percona-release' not in ansible_facts.packages"
-  service:
-    name: mysql
-    state: started
+  - name: install Percona-Server
+    yum:
+      name: Percona-Server-server-57
+      state: present
 
-- name: "Searching for Percona temprorary root password"
-  when: "'percona-release' not in ansible_facts.packages"
-  register: "percona_temp_password"
-  shell: "sed -rn 's/.*A temporary password is generated for root@localhost: (.*)/\\1/p' /var/log/mysqld.log"
-- set_fact:
-    percona_new_password: "{{ lookup('password', '/dev/null length=14 chars=ascii_letters,digits,punctuation') }}"
+  - name: start Percona-Server
+    service:
+      name: mysql
+      state: started
+
+  - name: "Searching for Percona temprorary root password"
+    register: "percona_temp_password"
+    shell: "sed -rn 's/.*A temporary password is generated for root@localhost: (.*)/\\1/p' /var/log/mysqld.log"
+    
+  - set_fact:
+      percona_new_password: "{{ lookup('password', '/dev/null length=20 chars=][%@+|-_;$:^#!?~,digits,ascii_letters') }}"
+
+  - debug:
+      msg: mysqladmin -uroot -p'{{percona_temp_password.stdout}}' password '{{ percona_new_password }}'
+
+  - name: "Set new percona root password"
+    shell: mysqladmin -uroot -p'{{percona_temp_password.stdout}}' password '{{ percona_new_password }}'
+
+  - name: create mysqld.cnf
+    template:
+      src: mysqld.cnf.j2
+      dest: "/etc/percona-server.conf.d/mysqld.cnf"
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: create /root/.my.cnf
+    template:
+      src: my.cnf.j2
+      dest: "/root/.my.cnf"
+      owner: root
+      group: root
+      mode: 0600      
+
+  - name: enable service Percona-Server
+    systemd:
+      name: mysql
+      enabled: yes
+
+  - name: start Percona-Server
+    service:
+      name: mysql
+      state: restarted
+
+  when: mysql.stat.exists == False
 
 - debug:
-    msg: new password '{{ percona_new_password }}'
-
-- name: "Set new percona root password"
-  when: "'percona-release' not in ansible_facts.packages"
-  shell: mysqladmin -uroot -p'{{percona_temp_password.stdout}}' password '{{ percona_new_password }}'
-
-- name: create mysqld.cnf
-  when: "'percona-release' not in ansible_facts.packages"
-  template:
-    src: mysqld.cnf.j2
-    dest: "/etc/percona-server.conf.d/mysqld.cnf"
-    owner: root
-    group: root
-    mode: 0644
-
-- name: create /root/.my.cnf
-  when: "'percona-release' not in ansible_facts.packages"
-  template:
-    src: my.cnf.j2
-    dest: "/root/.my.cnf"
-    owner: root
-    group: root
-    mode: 0644      
-
-- name: enable service Percona-Server
-  when: "'percona-release' not in ansible_facts.packages"
-  systemd:
-    name: mysql
-    enabled: yes
-
-- name: start Percona-Server
-  when: "'percona-release' not in ansible_facts.packages"
-  service:
-    name: mysql
-    state: restarted
+    msg: /var/lib/mysql already exists, aborting installation.
+  
