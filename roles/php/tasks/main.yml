@@ -4,7 +4,7 @@
     name: https://rpms.remirepo.net/enterprise/remi-release-7.rpm
     state: present
 
-- name: php + modules for {{php_version}}, {{php_installation_type}} installation
+- name: php + modules for {{php_version}}, main installation
   when: (php_installation_type == "main")
   yum:
     name:
@@ -37,6 +37,15 @@
   with_items:
     - { regexp: '^disable_functions.*', line: 'disable_functions = "popen,system,passthru,proc_open,shell_exec,ftp_exec"' }
 
+- name: truncate www.conf for {{php_version}}
+  copy: 
+    dest: /etc/php-fpm.d/www.conf 
+    content: ';empty for update' 
+    backup: yes
+  when: 
+    - php_installation_type == "main"
+    - php_disable_default_pool == True
+    
 - name: enable service php-fpm
   when: (php_installation_type == "main")
   systemd:
@@ -50,7 +59,7 @@
     name: php-fpm
     state: started
 
-- name: php + modules for {{php_version}}, {{php_installation_type}} installation
+- name: php + modules for {{php_version}}, additional installation
   when: (php_installation_type == "additional")
   yum:
     name:
@@ -75,15 +84,30 @@
     enablerepo: remi-{{php_version}}
     state: present
 
+- name: create directory for php-fpm logs, if doesnt exists
+  file:
+    path: /var/log/php-fpm/
+    owner: root
+    group: root
+    state: directory
+
 - name: change default php.ini
   when: (php_installation_type == "additional")
   lineinfile:
     path: /etc/opt/remi/{{php_version}}/php.ini
     regexp: "{{ item.regexp}}"
     line: "{{ item.line}}"
-
   with_items:
     - { regexp: '^disable_functions.*', line: 'disable_functions = "popen,system,passthru,proc_open,shell_exec,ftp_exec"' }
+  
+- name: truncate www.conf for {{php_version}}
+  copy: 
+    dest: /etc/opt/remi/{{php_version}}/php-fpm.d/www.conf 
+    content: ';empty for update' 
+    backup: yes
+  when: 
+    - php_installation_type == "additional"
+    - php_disable_default_pool == True
 
 - name: enable service php-fpm
   when: (php_installation_type == "additional")

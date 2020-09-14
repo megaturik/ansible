@@ -1,53 +1,66 @@
 ---
-- name: Add user {{env_user}}
+- name: Add user {{bitrix_env_user}}
   user:
-    name: "{{env_user}}"
+    name: "{{bitrix_env_user}}"
+
+- name: Create database user for {{bitrix_server_name}}
+  mysql_user:
+    name: "{{bitrix_mysql_db}}"
+    password: "{{ lookup('password', 'credentials/' + bitrix_server_name + '/' + bitrix_mysql_db + ' length=20 chars=][%@+|-_;$:^#!?~,digits,ascii_letters') }}"
+    priv: '*.*:ALL PRIVILEGES'
+    state: present
+    login_unix_socket: '/var/lib/mysql/mysql.sock'
+  when: bitrix_mysql_db is defined  
+
+- name: Create a new database with name "{{bitrix_mysql_db}}"
+  mysql_db:
+    name: "{{bitrix_mysql_db}}"
+    state: present
+    login_unix_socket: '/var/lib/mysql/mysql.sock'
+  when: bitrix_mysql_db is defined     
 
 - name: add necessary directories for php
   file:
     path: "{{ item }}"
-    owner: "{{env_user}}"
-    group: "{{env_user}}"
+    owner: "{{bitrix_env_user}}"
+    group: "{{bitrix_env_user}}"
     state: directory
   loop:
-     - /var/www/{{env_user}}/{{server_name}}
-     - /var/lib/php/{{server_name}}/session
-     - /var/lib/php/{{server_name}}/wsdlcache
-     - /var/lib/php/{{server_name}}/upload
+     - /var/www/{{bitrix_env_user}}/{{bitrix_server_name}}
+     - /var/lib/php/{{bitrix_server_name}}/session
+     - /var/lib/php/{{bitrix_server_name}}/wsdlcache
+     - /var/lib/php/{{bitrix_server_name}}/upload
 
 - name: create base config for nginx
   template:
     src: nginx/site.conf.j2
-    dest: /etc/nginx/conf.d/{{server_name}}.conf
+    dest: /etc/nginx/conf.d/{{bitrix_server_name}}.conf
     owner: root
     group: root
     mode: 0644
 
-- name: create config for php-fpm, php_version = {{php_version}}, type = {{php_installation_type}}
-  when: (php_installation_type == "main")
+- name: create config for php-fpm, bitrix_php_version = {{bitrix_php_version}}, type = main
+  when: (bitrix_php_type == "main")
   template:
     src: php-fpm.d/site.conf.j2
-    dest: /etc/php-fpm.d/{{server_name}}.conf
-    owner: root
-    group: root
-    mode: 0644
+    dest: /etc/php-fpm.d/{{bitrix_server_name}}.conf
 
-- name: create config for php-fpm, php_version = {{php_version}}, type = {{php_installation_type}}
-  when: (php_installation_type == "additional")
+- name: create config for php-fpm, bitrix_php_version = {{bitrix_php_version}}, type = additional
+  when: (bitrix_php_type == "additional")
   template:
     src: php-fpm.d/site.conf.j2
-    dest: /etc/opt/remi/{{php_version}}/php-fpm.d/{{server_name}}.conf
+    dest: /etc/opt/remi/{{bitrix_php_version}}/php-fpm.d/{{bitrix_server_name}}.conf
 
 - name: restart php-fpm
-  when: (php_installation_type == "main")
+  when: (bitrix_php_type == "main")
   service: 
     name: php-fpm
     state: restarted
     
 - name: restart php-fpm
-  when: (php_installation_type == "additional")
+  when: (bitrix_php_type == "additional")
   service:
-    name: "{{php_version}}-php-fpm"
+    name: "{{bitrix_php_version}}-php-fpm"
     state: restarted 
 
 - name: restart nginx

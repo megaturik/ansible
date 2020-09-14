@@ -1,6 +1,0 @@
-- name: Playbook for Bitrix-ENV
-  hosts: work
-  remote_user: root
-
-  roles:
-    - percona

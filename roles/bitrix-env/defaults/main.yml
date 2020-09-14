@@ -1,7 +1,7 @@
 ---
-php_version: php73
-php_installation_type: main
-php_port: 9000
-env_user: bitrix
-env_user_home: /var/www/{{env_user}}
-server_name: awesome.shop.bitrix
+bitrix_php_version: 
+bitrix_php_type: 
+bitrix_php_port: 
+bitrix_env_user: 
+bitrix_env_user_home:
+bitrix_server_name: 

@@ -1,9 +1,9 @@
-[{{server_name}}]
-listen = 127.0.0.1:{{php_port}}
+[{{bitrix_server_name}}]
+listen = 127.0.0.1:{{bitrix_php_port}}
 listen.allowed_clients = 127.0.0.1
 
-user = {{env_user}}
-group = {{env_user}}
+user = {{bitrix_env_user}}
+group = {{bitrix_env_user}}
 
 pm = dynamic
 pm.max_children = 30
@@ -16,20 +16,19 @@ pm.process_idle_timeout = 60s
 pm.status_path = /php_status
  
 request_slowlog_timeout = 3
-slowlog = /var/log/php-fpm/{{server_name}}-slow.log
+slowlog = /var/log/php-fpm/{{bitrix_server_name}}-slow.log
 
-access.log = /var/log/php-fpm/{{server_name}}-access.log
+access.log = /var/log/php-fpm/{{bitrix_server_name}}-access.log
 access.format = "%R - %u %t \"%m %r%Q%q\" %f %s Time: %{seconds}d Mem: %{megabytes}M Mb CPU:%C%% PID:%p"
  
  
 rlimit_files = 1024
-;rlimit_core = 0
 
 security.limit_extensions = .php
 
 php_admin_flag[display_errors] = On
 php_admin_value[error_reporting] = E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED 
-php_admin_value[error_log] = /var/log/php-fpm/{{server_name}}-error.log
+php_admin_value[error_log] = /var/log/php-fpm/{{bitrix_server_name}}-error.log
 php_admin_flag[log_errors] = on
 php_admin_value[disable_functions] = "popen,system,passthru,proc_open,shell_exec,ftp_exec"
 php_admin_value[allow_url_fopen] = On
@@ -43,8 +42,7 @@ php_admin_value[default_charset] = "UTF-8"
 php_admin_value[memory_limit] = 256M
 php_admin_value[upload_max_filesize] = 16M
 php_admin_flag[file_uploads] = On
-; Set session path to a directory owned by process user
 php_value[session.save_handler] = files
-php_value[session.save_path]    = /var/lib/php/{{server_name}}/session
-php_value[soap.wsdl_cache_dir]  = /var/lib/php/{{server_name}}/wsdlcache
-php_value[upload_tmp_dir] = /var/lib/php/{{server_name}}/upload
+php_value[session.save_path]    = /var/lib/php/{{bitrix_server_name}}/session
+php_value[soap.wsdl_cache_dir]  = /var/lib/php/{{bitrix_server_name}}/wsdlcache
+php_value[upload_tmp_dir] = /var/lib/php/{{bitrix_server_name}}/upload

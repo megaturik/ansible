@@ -1,3 +1,4 @@
 ---
   php_version: php73
-  php_installation_type: default
+  php_installation_type: main
+  php_disable_default_pool: 0

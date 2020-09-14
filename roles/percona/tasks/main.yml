@@ -57,7 +57,8 @@
       owner: root
       group: root
       mode: 0600      
-
+      
+      
   - name: enable service Percona-Server
     systemd:
       name: mysql
@@ -72,4 +73,5 @@
 
 - debug:
     msg: /var/lib/mysql already exists, aborting installation.
+  when: mysql.stat.exists == True
   

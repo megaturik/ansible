@@ -9,7 +9,7 @@
   - name: Add mariadb repo
     yum_repository:
       name: mariadb
-      description: nginx repo
+      description: mariadb repo
       file: mariadb
       baseurl: http://yum.mariadb.org/10.5/centos7-amd64
       gpgcheck: yes
@@ -50,8 +50,8 @@
       dest: "/root/.my.cnf"
       owner: root
       group: root
-      mode: 0644      
-      
+      mode: 0600
+
   - name: enable service mariadb
     systemd:
       name: mariadb
@@ -66,3 +66,5 @@
 
 - debug:
     msg: /var/lib/mysql already exists, aborting installation.
+  when: mysql.stat.exists == True
+        
