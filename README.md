@@ -17,7 +17,7 @@
     - firewalld
     - zabbix
     - { role: bitrix-env,
-      bitrix_php_type: 'additional',
+      bitrix_php_type: 'main',
       bitrix_php_version: 'php72',
       bitrix_env_user: site1,
       bitrix_php_port: '9001',

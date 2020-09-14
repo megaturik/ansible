@@ -1,4 +1,9 @@
 ---
+- name: deploy firewalld
+  yum:
+    name: firewalld
+    state: present
+
 - name: remove some garbage rules for firewalld
   firewalld:
     zone: work

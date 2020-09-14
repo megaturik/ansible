@@ -5,4 +5,4 @@ dependencies:
   - role : php
     php_version: "{{bitrix_php_version}}"
     php_installation_type: "{{bitrix_php_type}}"
-    php_disable_default_pool: true
+    php_disable_default_pool: 1
