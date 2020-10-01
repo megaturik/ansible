@@ -19,8 +19,7 @@ request_slowlog_timeout = 3
 slowlog = /var/log/php-fpm/{{bitrix_server_name}}-slow.log
 
 access.log = /var/log/php-fpm/{{bitrix_server_name}}-access.log
-access.format = "%R - %u %t \"%m %r%Q%q\" %f %s Time: %{seconds}d Mem: %{megabytes}M Mb CPU:%C%% PID:%p"
- 
+access.format = "%{REMOTE_ADDR}e - %u %t \"%m %r%Q%q\" %f %s Time: %{seconds}d Mem: %{megabytes}M Mb CPU:%C%% PID:%p" 
  
 rlimit_files = 1024
 

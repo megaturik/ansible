@@ -74,23 +74,14 @@ server {
                 break;
         }
 
-	location /.well-known {
-		allow all;
-		auth_basic off;
-	}
+	    location /.well-known {
+		    allow all;
+		    auth_basic off;
+	    }   
 
         location / {
         	rewrite ^([^.]*[^/])$ $1/ permanent;
 	        try_files       $uri $uri/ @bitrix;
-        }
-        
-        location ~ \.php$ {
-                try_files       $uri @bitrix;
-                include         fastcgi_params;
-                fastcgi_read_timeout 600;
-                fastcgi_param   DOCUMENT_ROOT $document_root;
-                fastcgi_param   SCRIPT_FILENAME $document_root$fastcgi_script_name;
-                fastcgi_pass    127.0.0.1:{{bitrix_php_port}};
         }
         
         location ~* ^/bitrix/admin/.*\.php$ {
@@ -102,6 +93,15 @@ server {
                 fastcgi_pass    127.0.0.1:{{bitrix_php_port}};
         }
 
+        location ~ \.php$ {
+                try_files       $uri @bitrix;
+                include         fastcgi_params;
+                fastcgi_read_timeout 600;
+                fastcgi_param   DOCUMENT_ROOT $document_root;
+                fastcgi_param   SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                fastcgi_pass    127.0.0.1:{{bitrix_php_port}};
+        }
+        
         location @bitrix {
                 include         fastcgi_params;
                 fastcgi_param   DOCUMENT_ROOT $document_root;

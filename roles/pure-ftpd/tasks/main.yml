@@ -1,0 +1,17 @@
+---
+- name: install pure-ftpd
+  yum:
+    name: pure-ftpd
+    state: present
+
+- name: enable service pure-ftpd
+  systemd:
+    name: pure-ftpd
+    enabled: yes
+
+- name: start pure-ftpd
+  service:
+    name: pure-ftpd
+    state: started
+
+

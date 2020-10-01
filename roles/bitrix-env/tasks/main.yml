@@ -7,7 +7,7 @@
   mysql_user:
     name: "{{bitrix_mysql_db}}"
     password: "{{ lookup('password', 'credentials/' + bitrix_server_name + '/' + bitrix_mysql_db + ' length=20 chars=][%@+|-_;$:^#!?~,digits,ascii_letters') }}"
-    priv: '*.*:ALL PRIVILEGES'
+    priv: '{{bitrix_mysql_db}}.*:ALL PRIVILEGES'
     state: present
     login_unix_socket: '/var/lib/mysql/mysql.sock'
   when: bitrix_mysql_db is defined  

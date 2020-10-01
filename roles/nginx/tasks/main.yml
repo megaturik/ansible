@@ -8,7 +8,7 @@
     gpgcheck: yes
     gpgkey: https://nginx.org/keys/nginx_signing.key
     enabled: yes
-  when: epel_repo == False
+  when: epel_repo == True
 
 - name: Install nginx
   yum:
