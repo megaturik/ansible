@@ -28,6 +28,7 @@
       - vim
       - rsync 
       - mysql-connector-python
+      - MySQL-python
       - python2-PyMySQL
       - wget
       - net-tools

@@ -1,0 +1,24 @@
+- name: Playbook for Bitrix-ENV
+  hosts: bitrix.host
+  remote_user: root
+
+  roles:
+    - common
+    - percona
+    - firewalld
+    - zabbix
+    - { role: bitrix-env,
+      bitrix_php_type: 'main',
+      bitrix_php_version: 'php72',
+      bitrix_env_user: site1,
+      bitrix_php_port: '9001',
+      bitrix_server_name: site1.bitrix.ru,
+      bitrix_mysql_db: 'site1' }
+    - { role: bitrix-env,
+      bitrix_php_type: 'additional',
+      bitrix_php_version: 'php73',
+      bitrix_env_user: site2,
+      bitrix_php_port: '9002',
+      bitrix_server_name: site2.bitrix.ru,
+      bitrix_mysql_db: 'site2' }
+
