@@ -1,7 +1,6 @@
 ---
 dependencies:
   - role : common
-  - role : nginx
   - role : php
     php_version: "{{bitrix_php_version}}"
     php_installation_type: "{{bitrix_php_type}}"

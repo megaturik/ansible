@@ -45,11 +45,41 @@
     src: php-fpm.d/site.conf.j2
     dest: /etc/php-fpm.d/{{bitrix_server_name}}.conf
 
+- name: change default php.ini
+  when: (bitrix_php_type == "main")
+  lineinfile:
+    path: /etc/php.ini
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '^;?short_open_tag.*', line: 'short_open_tag = On' }
+    - { regexp: '^;?allow_url_fopen.*', line: 'allow_url_fopen = On' }
+    - { regexp: '^;?disable_functions.*', line: 'disable_functions = "popen,system,passthru,proc_open,shell_exec,ftp_exec"' }
+    - { regexp: '^;?mbstring.func_overload.*', line: 'mbstring.func_overload = 2' }
+    - { regexp: '^;?mbstring.internal_encoding.*', line: 'mbstring.internal_encoding="utf-8"' }
+    - { regexp: '^;?memory_limit.*', line: 'memory_limit = 512M' }
+    - { regexp: '^;?date.timezone.*', line: 'date.timezone = "Europe/Moscow"' }
+
 - name: create config for php-fpm, bitrix_php_version = {{bitrix_php_version}}, type = additional
   when: (bitrix_php_type == "additional")
   template:
     src: php-fpm.d/site.conf.j2
     dest: /etc/opt/remi/{{bitrix_php_version}}/php-fpm.d/{{bitrix_server_name}}.conf
+
+- name: change default php.ini
+  when: (bitrix_php_type == "additional")
+  lineinfile:
+    path: /etc/opt/remi/{{bitrix_php_version}}/php.ini
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '^;?short_open_tag.*', line: 'short_open_tag = On' }
+    - { regexp: '^;?allow_url_fopen.*', line: 'allow_url_fopen = On' }
+    - { regexp: '^;?disable_functions.*', line: 'disable_functions = "popen,system,passthru,proc_open,shell_exec,ftp_exec"' }
+    - { regexp: '^;?mbstring.func_overload.*', line: 'mbstring.func_overload = 2' }
+    - { regexp: '^;?mbstring.internal_encoding.*', line: 'mbstring.internal_encoding="utf-8"' }
+    - { regexp: '^;?memory_limit.*', line: 'memory_limit = 512M' }
+    - { regexp: '^;?date.timezone.*', line: 'date.timezone = "Europe/Moscow"' }
 
 - name: restart php-fpm
   when: (bitrix_php_type == "main")
