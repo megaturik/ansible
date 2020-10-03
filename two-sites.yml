@@ -7,6 +7,7 @@
     - percona
     - firewalld
     - zabbix
+    - nginx
     - { role: bitrix-env,
       bitrix_php_type: 'main',
       bitrix_php_version: 'php72',
