@@ -23,6 +23,7 @@ bitrix_mysql_db = будет создана база mysql, с соответс�
     - common
     - percona
     - firewalld
+    - nginx
     - zabbix
     - { role: bitrix-env,
       bitrix_php_type: 'main',
